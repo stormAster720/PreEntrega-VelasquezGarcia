@@ -73,7 +73,8 @@ const showProductCatalog = () => {
         6. Doritos ($2500)
         7. Atún ($2000)
         8. Agua en botella plástica ($1000)
-        9. Jugo en caja ($900)`);
+        9. Jugo en caja ($900)
+        0. Pagar los elementos del carrito (su subtotal actual es $${subtotal})`);
 
             // Break the loop if the user cancels the prompt
             if (productIndex === null) {
@@ -84,18 +85,28 @@ const showProductCatalog = () => {
             }
 
             // Valid input provided, exit the loop
-            if (productIndex !== "" && !isNaN(productIndex) && parseInt(productIndex) > 0 && productIndex.toString().length < 2) {
+            if (productIndex !== "" && !isNaN(productIndex) && productIndex.toString().length < 2) {
                 break;
             }
 
             //If the input is invalid, just show the error message
-            alert("El valor que ingresado no es válido, asegurese de escribir un solo número y recuerde que no se pueden escribir letras letras, así mismo asegurese de no dejar el campo vacío.");
+            alert("El valor que ingresado no es válido, asegurese de escribir un solo número y recuerde que no se pueden escribir letras, así mismo asegurese de no dejar el campo vacío.");
         }
 
-        if (keepShopping) {
-
+        if (keepShopping && productIndex != 0) {
             alert(`El producto "${addToCart(productIndex)}" ha sido agregado con exito, su subtotal es $${parseInt(subtotal)}`);
             keepShopping = confirm("¿Desea seguir agregando productos?");
+        } else 
+        //If the user writes 0, it will trigger a payment condition
+        if (productIndex == 0) {
+            if (subtotal <= 0) {
+                alert(`No tiene nada pendiente por pagar, por favor agregue productos al carrito`);
+            } else {
+                //If the user has products added to the cart, then let him decide if he wants to pay for them right away
+                if (confirm(`¿Esta seguro de que quiere pagar sus productos ahora mismo?`)) {
+                    break;
+                }
+            }
         }
     } while (keepShopping);
 
@@ -103,7 +114,6 @@ const showProductCatalog = () => {
         concludeShopping();
     }
 }
-
 //Show a cancel alert when a user clicks the cancel button
 const cancelShopping = () => {
     alert("La compra ha sido cancelada, por favor recargue el sitio para empezar de nuevo.");
@@ -118,7 +128,7 @@ const concludeShopping = () => {
 
     alert(`Señor / Señora "${returnUserName()}", su subtotal es $${subtotal} y aplicando el iva (15%), su total es $${total}. 
     
-Gracias por comprar con nosotros, vuelva pronto!`);
+Gracias por comprar con nosotros ¡vuelva pronto!`);
 }
 
 //Code start
