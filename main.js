@@ -10,14 +10,14 @@ const productsInCart = [];
 
 //Add a product to cart while also returning the product name
 const addToCart = (productName) => {
-    const product = products.find(current => current.name === productName || current.id === parseInt(productName))
+    const product = products.find(current => current.name.toLowerCase() === productName.toLowerCase() || current.id === parseInt(productName));
     productsInCart.push(product);
     subtotal += product.price;
-}
+};
 
 //returns true if the product name or id exists in the product stock
 const getProductFromStock = (product) => {
-    const productFound = products.some(current => current.name === product || current.id === parseInt(product))
+    const productFound = products.some(current => current.name.toLowerCase() === product.toLowerCase() || current.id === parseInt(product))
     return productFound;
 }
 
@@ -42,21 +42,16 @@ const showProductCatalog = () => {
 
     alert(`Un gusto, "${returnUserName()}", a continuación le mostramos nuestro catálogo actual de productos.`);
 
+    //Map all the products into a string and display it inside the prompt as an option
+    let promptOptions = products.map((product, index) => `${index + 1}. ${product.name} ($${product.price})`).join("\n");
+
     do {
         // Keep prompting until a valid input is provided
         while (true) {
-            promptedProduct = prompt(`Por favor escriba el número del producto que desea (solo 1 producto a la vez). 
-  
-        1. Papa ($1500)
-        2. Cebolla ($500)
-        3. Tomate ($800)
-        4. Aguacate ($2000)
-        5. Yuca ($1700)
-        6. Doritos ($2500)
-        7. Atún ($2000)
-        8. Agua en botella plástica ($1000)
-        9. Jugo en caja ($900)
-        0. Pagar los elementos del carrito (su subtotal actual es $${subtotal})`);
+            promptedProduct = prompt(`Por favor escriba el nombre del producto que desea o el numero del producto (solo 1 producto a la vez).
+
+${promptOptions}
+0. Pagar los elementos del carrito (su subtotal actual es $${subtotal})`);
 
             // Break the loop if the user cancels the prompt
             if (promptedProduct === null) {
@@ -67,22 +62,22 @@ const showProductCatalog = () => {
             }
 
             // Valid input provided, exit the loop
-            if (promptedProduct !== "" && getProductFromStock(promptedProduct)) {
+            if (promptedProduct !== "" && getProductFromStock(promptedProduct) || promptedProduct == 0) {
                 break;
             }
 
             //If the input is invalid, just show the error message
-            alert("El valor que ingresado no es válido, asegurese de escribir un solo número y recuerde que no se pueden escribir letras, así mismo asegurese de no dejar el campo vacío.");
+            alert("El valor que ingresado no es válido, asegurese de escribir un nombre o numero de producto valido, así mismo asegurese de no dejar el campo vacío.");
         }
 
         //Adds a product to the cart and retrieves it's last value on the added products array to display it
         if (keepShopping && promptedProduct != 0) {
             addToCart(promptedProduct);
-            alert(`El producto "${productsInCart[productsInCart.length -1].name}" ha sido agregado con exito, su subtotal es $${parseInt(subtotal)}`);
+            alert(`El producto "${productsInCart[productsInCart.length - 1].name}" ha sido agregado con exito, su subtotal es $${parseInt(subtotal)}`);
             keepShopping = confirm("¿Desea seguir agregando productos?");
         } else
             //If the user writes 0, it will trigger a payment condition
-            if (productIndex == 0) {
+            if (promptedProduct == 0) {
                 if (subtotal <= 0) {
                     alert(`No tiene nada pendiente por pagar, por favor agregue productos al carrito`);
                 } else {
