@@ -5,38 +5,20 @@ let subtotal = 0;
 //Return the user name provided earlier with the first char as uppercase
 const returnUserName = () => { return clientName.charAt(0).toUpperCase() + clientName.slice(1) }
 
-//Add a product to cart while also returning the product name
-const addToCart = (product) => {
+//An array that contains the products added to the cart
+const productsInCart = [];
 
-    switch (parseInt(product)) {
-        case 1:
-            subtotal += 1500;
-            return "Papa";
-        case 2:
-            subtotal += 500;
-            return "Cebolla";
-        case 3:
-            subtotal += 800;
-            return "Tomate";
-        case 4:
-            subtotal += 2000;
-            return "Aguacate";
-        case 5:
-            subtotal += 1700;
-            return "Yuca";
-        case 6:
-            subtotal += 2500;
-            return "Doritos";
-        case 7:
-            subtotal += 2000;
-            return "Atún";
-        case 8:
-            subtotal += 1000;
-            return "Agua en botella plastica";
-        case 9:
-            subtotal += 900;
-            return "Jugo en caja";
-    }
+//Add a product to cart while also returning the product name
+const addToCart = (productName) => {
+    const product = products.find(current => current.name === productName || current.id === parseInt(productName))
+    productsInCart.push(product);
+    subtotal += product.price;
+}
+
+//returns true if the product name or id exists in the product stock
+const getProductFromStock = (product) => {
+    const productFound = products.some(current => current.name === product || current.id === parseInt(product))
+    return productFound;
 }
 
 //Self explanatory
@@ -55,7 +37,7 @@ const promptClientName = () => {
 //Self explanatory
 const showProductCatalog = () => {
     let keepShopping = true;
-    let productIndex = 0;
+    let promptedProduct = 0;
     let shoppingCancelled = false;
 
     alert(`Un gusto, "${returnUserName()}", a continuación le mostramos nuestro catálogo actual de productos.`);
@@ -63,7 +45,7 @@ const showProductCatalog = () => {
     do {
         // Keep prompting until a valid input is provided
         while (true) {
-            productIndex = prompt(`Por favor escriba el número del producto que desea (solo 1 producto a la vez). 
+            promptedProduct = prompt(`Por favor escriba el número del producto que desea (solo 1 producto a la vez). 
   
         1. Papa ($1500)
         2. Cebolla ($500)
@@ -77,7 +59,7 @@ const showProductCatalog = () => {
         0. Pagar los elementos del carrito (su subtotal actual es $${subtotal})`);
 
             // Break the loop if the user cancels the prompt
-            if (productIndex === null) {
+            if (promptedProduct === null) {
                 keepShopping = false;
                 shoppingCancelled = true;
                 cancelShopping();
@@ -85,7 +67,7 @@ const showProductCatalog = () => {
             }
 
             // Valid input provided, exit the loop
-            if (productIndex !== "" && !isNaN(productIndex) && productIndex.toString().length < 2) {
+            if (promptedProduct !== "" && getProductFromStock(promptedProduct)) {
                 break;
             }
 
@@ -93,21 +75,23 @@ const showProductCatalog = () => {
             alert("El valor que ingresado no es válido, asegurese de escribir un solo número y recuerde que no se pueden escribir letras, así mismo asegurese de no dejar el campo vacío.");
         }
 
-        if (keepShopping && productIndex != 0) {
-            alert(`El producto "${addToCart(productIndex)}" ha sido agregado con exito, su subtotal es $${parseInt(subtotal)}`);
+        //Adds a product to the cart and retrieves it's last value on the added products array to display it
+        if (keepShopping && promptedProduct != 0) {
+            addToCart(promptedProduct);
+            alert(`El producto "${productsInCart[productsInCart.length -1].name}" ha sido agregado con exito, su subtotal es $${parseInt(subtotal)}`);
             keepShopping = confirm("¿Desea seguir agregando productos?");
-        } else 
-        //If the user writes 0, it will trigger a payment condition
-        if (productIndex == 0) {
-            if (subtotal <= 0) {
-                alert(`No tiene nada pendiente por pagar, por favor agregue productos al carrito`);
-            } else {
-                //If the user has products added to the cart, then let him decide if he wants to pay for them right away
-                if (confirm(`¿Esta seguro de que quiere pagar sus productos ahora mismo?`)) {
-                    break;
+        } else
+            //If the user writes 0, it will trigger a payment condition
+            if (productIndex == 0) {
+                if (subtotal <= 0) {
+                    alert(`No tiene nada pendiente por pagar, por favor agregue productos al carrito`);
+                } else {
+                    //If the user has products added to the cart, then let him decide if he wants to pay for them right away
+                    if (confirm(`¿Esta seguro de que quiere pagar sus productos ahora mismo?`)) {
+                        break;
+                    }
                 }
             }
-        }
     } while (keepShopping);
 
     if (!shoppingCancelled) {
