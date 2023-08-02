@@ -7,5 +7,5 @@ const products = [
 {quantity: 0, name: "Doritos", price: 2500, image: "./src/images/Doritos.webp" },
 {quantity: 0, name: "Atún", price: 2000, image: "./src/images/Atun.png" },
 {quantity: 0, name: "Agua en botella plastica", price: 500, image: "./src/images/Agua.jpg" },
-{quantity: 0, name: "Jugo en caja", price: 500, image: "./src/images/jugo en caja.jpg" }
+{quantity: 0, name: "Jugo en caja", price: 500, image: "./src/images/Jugo_en_caja.jpg" }
 ];
