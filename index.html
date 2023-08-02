@@ -3,11 +3,82 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="./styles.css">
     <title>Simulador interactivo Luis Felipe</title>
 </head>
 <body>
     <!-- Initialize script --> 
-    <script src="./stock.js"></script>
-    <script src="./main.js"></script>
+
+<!-- The Modal -->
+<div id="myModal" class="modal">
+
+  <!-- Modal content -->
+  <div class="modal-content">
+    <span class="close">&times;</span>
+    <p>Gracias por su compra.</p>
+  </div>
+
+</div>
+
+    <div class="catalog">
+        <h1 class="mt-4 mb-0 mx-3 store__title"> Tienda Improvisada</h1>
+
+        <div class="alert alert-success" role="alert">
+            El producto "<strong  id="product__alert">Producto</strong>" ha sido agregado con exito al carrito. <a href="#" class="alert-link">Ver carrito</a>
+          </div>
+
+        <div class="catalog__content">
+            <!-- <div class="catalog__content--item">
+                <img src="./sample img.png" alt="">
+                <p id="product__name"> Papa </p>
+                <p id="product__price"> Precio</p>
+                <p class="catalog--quanity-text"> 1 </p>
+
+                <div class="catalog__content--item--buttons">
+                    <button class="catalog--removeQuantity"> - </button>
+                    <button class="catalog--addToCart"> Añadir al carrito</button>
+                    <button class="catalog--addQuantity" > + </button>
+                </div>
+            </div> -->
+        </div>
+    </div>
+
+    <!-- sidebar cart -->
+    <div class="cart">
+        <div class="cart__buttons">
+            <h2 class="cart__title"> Tu carrito </h2>
+            <button class="cart__buttons--close"> X </button>
+        </div>
+      
+       
+        <div class="cart__content">
+            <!-- <div class="cart__content--element">
+                <div class="cart__content--element--leftSide">
+                <img src="./sample img.png" alt="">
+                <div class="cart__content--element--text">
+                    <p>Precio: $6000 </p>
+                    <p>Cantidad: 255 </p>
+                    <p>ID: 0</p>
+                </div>
+            </div>
+                <button class="cart--removeElementBtn"> x </button>
+            </div> -->
+            
+        </div>
+
+        <h2 class="d-flex justify-content-center my-2" id="cart__subtotal"> Subtotal: $0</h2>
+        <h2 class="d-flex justify-content-center my-2" id="cart__total"> Total (tax 15%): $0</h2>
+        <button class="cart--payButton"> Pagar </button>
+        <button class="cart--clearButton"> Borrar carrito </button>
+
+    </div>
+
+    <script src="./src/scripts/stock.js"> </script>
+    <script src="./src/scripts/drawProduct.js"></script>
+    <script src="./src/scripts/cart.js"></script>
+    <script src="./src/scripts/main.js"></script>
+
+
 </body>
 </html>
