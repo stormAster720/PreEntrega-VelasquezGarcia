@@ -80,6 +80,21 @@ payCartDOM.addEventListener("click", async () => {
 
 
 const clearCart = () => {
+    if(productsOnCart.length > 0) {
+        Swal.fire({
+            title: '¡Elementos eliminados con exito!',
+            icon: 'success',
+            html: `Los prodcutos del carrito han sido eliminados con exito, puede volver a agregar productos.`
+            //Clear cart after paying  
+        })
+    } else {
+        Swal.fire({
+            title: 'No hay elementos en el carrito',
+            icon: 'warning',
+            html: `No hay elementos en el carrito para eliminar, por favor agregue productos.`
+            //Clear cart after paying  
+        })
+    }
     productsOnCart.splice(0, productsOnCart.length);
     subtotal = 0;
     total = 0;
