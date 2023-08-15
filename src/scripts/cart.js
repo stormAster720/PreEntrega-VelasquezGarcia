@@ -7,57 +7,27 @@ const totalDOM = document.getElementById("cart__total");
 const payCartDOM = document.querySelector(".cart--payButton");
 const clearCartDOM = document.querySelector(".cart--clearButton");
 
-//Cart display
-const alertDOM = document.getElementById("product__alert");
-const alertLink = document.querySelector(".alert-link");
-
 const cartDOM = document.querySelector(".cart");
 const cartCloseDOM = document.querySelector(".cart__buttons--close")
 
-//Close cart logic
-cartCloseDOM.addEventListener("click", function() {
-    cartDOM.style.display = "none";
-    });
+const handleCartOpening = () => {
+    //Open cart logic
+    cartDOM.style.display = "block";
+}
 
-//Open cart logic
-alertLink.addEventListener("click", function() {
-cartDOM.style.display = "block";
+//Close cart logic
+cartCloseDOM.addEventListener("click", function () {
+    cartDOM.style.display = "none";
 });
 
 
-const updateAlert = (product) => {
-    alertDOM.textContent = product.name;
-}
-
+//An array that keeps track of the products on stock
+const products = [];
 
 //An array that keeps track of the products added to the cart
 const productsOnCart = [];
 //An array that keeps track of the DOM
 const containerArray = [];
-
-// modal
-
-// Get the modal
-var modal = document.getElementById("myModal");
-
-// Get the button that opens the modal
-var btn = document.getElementById("myBtn");
-
-// Get the <span> element that closes the modal
-var span = document.getElementsByClassName("close")[0];
-
-// When the user clicks on <span> (x), close the modal
-span.onclick = function() {
-  modal.style.display = "none";
-}
-
-// When the user clicks anywhere outside of the modal, close it
-window.onclick = function(event) {
-  if (event.target == modal) {
-    modal.style.display = "none";
-  }
-}
-
 
 //An object that represents a DOM item
 function DOMItem(productName, container) {
@@ -65,15 +35,43 @@ function DOMItem(productName, container) {
     this.container = container;
 }
 
-const payCart = () => {
-    modal.style.display = "block";
-    cartDOM.style.display = "none"
-    clearCart();
+//Generate order ID after purchase
+const generateID = (length) => {
+    let result = '';
+    const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    const charactersLength = characters.length;
+    let counter = 0;
+    while (counter < length) {
+        result += characters.charAt(Math.floor(Math.random() * charactersLength));
+        counter += 1;
+    }
+    return result;
+}
+
+
+// Async funtion to handle cart payment
+const payCart = async () => {
+    if (subtotal > 0 || productsOnCart.length > 0) {
+        await Swal.fire({
+            title: '¡Pago efectuado con éxito!',
+            icon: 'success',
+            html: `Gracias por su compra, en unos minutos llegará su pedido a su domicilio, su código de confirmación de compra es <strong>${generateID(5).toUpperCase()}</strong>`
+            //Clear cart after paying  
+        }).then(clearCart())
+
+    } else {
+        await Swal.fire({
+            title: 'No hay elementos en el carrito',
+            text: 'Por favor agregue productos al carrito para procesar su orden.',
+            icon: 'warning',
+        });
+    }
 };
 
 //Pay cart logic 
-
-payCartDOM.addEventListener("click",  payCart);
+payCartDOM.addEventListener("click", async () => {
+    await payCart();
+});
 
 
 const clearCart = () => {
@@ -108,7 +106,6 @@ const addToCart = (product, quantity) => {
     subtotal += product.price * quantity;
     total = (subtotal * 0.15) + subtotal;
 
-    updateAlert(product);
     subtotalDOM.textContent = "Subtotal: $" + subtotal.toLocaleString();
     totalDOM.textContent = "Total (tax 15%): $" + total.toLocaleString();
 };
@@ -172,19 +169,36 @@ const addToDOM = (product, quantity) => {
 };
 
 
-const removeFromCart = (product) => {
-    subtotal -= product.price * (product.quantity);
+// Remove from cart function
+const removeFromCart = async (product) => {
+    subtotal -= product.price * product.quantity;
     total = (subtotal * 0.15) + subtotal;
 
     subtotalDOM.textContent = "Subtotal: $" + subtotal.toLocaleString();
     totalDOM.textContent = "Total (tax 15%): $" + total.toLocaleString();
-    removeFromDOM(product);
-    const index = productsOnCart.indexOf(product);
-    productsOnCart[index].quantity = 0;
-    productsOnCart.splice(index, 1);
 
-    //Set the values of the cart on the local storage 
-    localStorage.setItem('cart', JSON.stringify(productsOnCart));
+    try {
+        // Assuming Toastify returns a promise
+        await Toastify({
+            text: `El producto "${product.name}" ha sido removido del carrito`,
+            duration: 2000,
+            position: "left",
+            style: {
+                color: "black",
+                background: "white",
+            },
+        }).showToast();
+
+        removeFromDOM(product);
+        const index = productsOnCart.indexOf(product);
+        productsOnCart[index].quantity = 0;
+        productsOnCart.splice(index, 1);
+
+        // Set the values of the cart on the local storage
+        localStorage.setItem('cart', JSON.stringify(productsOnCart));
+    } catch (error) {
+        console.error('Error while removing from cart:', error);
+    }
 };
 
 const removeFromDOM = (product) => {
@@ -193,13 +207,19 @@ const removeFromDOM = (product) => {
     containerArray.splice(index, 1);
 };
 
-const retrieveCart = () => {
+//Get cart info in a asyncronous way
+const retrieveCart = async () => {
+    try {
+        const cartJSON = localStorage.getItem('cart');
+        const cartItems = JSON.parse(cartJSON);
 
-    const cartJSON = localStorage.getItem('cart');
-    const cartItems = JSON.parse(cartJSON);
-
-    cartItems.forEach(item => {
-        addToCart(item, item.quantity);
-    });
+        for (const item of cartItems) {
+            await addToCart(item, item.quantity);
+        }
+    } catch (error) {
+        console.error('Error retrieving cart:', error);
+    }
 };
+
+
 

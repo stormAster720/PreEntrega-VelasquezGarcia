@@ -1,10 +1,10 @@
 const renderProducts = (data) => {
-    const itemContainer = document.querySelector(".catalog__content");
-  
-    data.forEach((item) => {
-      const container = document.createElement("div");
-      container.classList.add("catalog__content--item");
-      container.innerHTML += `
+  const itemContainer = document.querySelector(".catalog__content");
+
+  data.forEach((item) => {
+    const container = document.createElement("div");
+    container.classList.add("catalog__content--item");
+    container.innerHTML += `
         <img src="${item.image}" alt="">
         <p id="product__name"> ${item.name} </p>
         <p id="product__price"> $${item.price}</p>
@@ -16,38 +16,52 @@ const renderProducts = (data) => {
             <button class="catalog--addQuantity"> + </button>
         </div>
       `;
-  
-      // Get the buttons within the container and add event listeners
 
-      let quantity = 1;
-      const quantityText = container.querySelector(".catalog--quanity-text");
-     
+    // Get the buttons within the container and add event listeners
 
-      const addToCartBtn = container.querySelector(".catalog--addToCart");
-      const removeQuantityBtn = container.querySelector(".catalog--removeQuantity");
-      const addQuantityBtn = container.querySelector(".catalog--addQuantity");
-  
-      // Add event listeners to the buttons
-      addToCartBtn.addEventListener("click", () => {
-        // Add logic for the "Añadir al carrito" button
-          addToCart(item, quantity);
-          saveCartToJSON(item, quantity);
-      });
-  
-      removeQuantityBtn.addEventListener("click", () => {
-        // Add logic for the "-" button to decrease quantity
-        quantity = Math.max(1, quantity - 1); // Ensure quantity doesn't go below 1
-        quantityText.textContent = quantity;
+    let quantity = 1;
+    const quantityText = container.querySelector(".catalog--quanity-text");
+    const addToCartBtn = container.querySelector(".catalog--addToCart");
+    const removeQuantityBtn = container.querySelector(".catalog--removeQuantity");
+    const addQuantityBtn = container.querySelector(".catalog--addQuantity");
 
-      });
-  
-      addQuantityBtn.addEventListener("click", () => {
-        // Add logic for the "+" button to increase quantity
-        quantity += 1;
-        quantityText.textContent = quantity;
+    // Add event listeners to the buttons
+    addToCartBtn.addEventListener("click", () => {
+      // Add logic for the "Añadir al carrito" button
+      addToCart(item, quantity);
 
-      });
-  
-      itemContainer.appendChild(container);
+      Swal.fire({
+        title: '¡Producto agregado al carrito!',
+        icon: 'success',
+        html: `El producto <strong>${item.name} (${quantity} unidades)</strong> ha sido agregado con éxito`,
+        cancelButtonText: 'Ver carrito',
+        showCancelButton: true,
+        showCloseButton: false,
+
+      }).then((result) => {
+        if (result.dismiss === Swal.DismissReason.cancel) {
+          handleCartOpening();
+        }
+      })
+
+      saveCartToJSON(item, quantity);
     });
-  };
+
+    removeQuantityBtn.addEventListener("click", () => {
+      // Add logic for the "-" button to decrease quantity
+      quantity = Math.max(1, quantity - 1); // Ensure quantity doesn't go below 1
+      quantityText.textContent = quantity;
+
+    });
+
+    addQuantityBtn.addEventListener("click", () => {
+      // Add logic for the "+" button to increase quantity
+      quantity += 1;
+      quantityText.textContent = quantity;
+
+    });
+
+    //Append the item to the DOM to display it
+    itemContainer.appendChild(container);
+  });
+};
