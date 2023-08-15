@@ -269,9 +269,9 @@ p {
 /*mini cart */
 
 .bi-cart + p {
-position: absolute;
-top: 6%;
-right: 3.7%;
+position: relative;
+margin-top: -20px;
+right: -65%;
 font-size: 20px;
 }
 

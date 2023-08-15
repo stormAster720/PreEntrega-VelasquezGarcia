@@ -54,7 +54,6 @@ const generateID = (length) => {
     return result;
 }
 
-
 // Async funtion to handle cart payment
 const payCart = async () => {
     if (subtotal > 0 || productsOnCart.length > 0) {
@@ -94,11 +93,10 @@ const clearCart = () => {
 
     //Update mini cart text
     cartIconText.textContent = productsOnCart.length
-    
+
     //Set the values of the cart on the local storage 
     localStorage.setItem('cart', JSON.stringify(productsOnCart));
 };
-
 
 clearCartDOM.addEventListener("click", clearCart)
 
