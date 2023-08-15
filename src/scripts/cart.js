@@ -8,12 +8,18 @@ const payCartDOM = document.querySelector(".cart--payButton");
 const clearCartDOM = document.querySelector(".cart--clearButton");
 
 const cartDOM = document.querySelector(".cart");
+//Mini cart
+const cartIconDOM = document.querySelector(".bi-cart");
+const cartIconText = document.querySelector("#mini-cart-count")
+
 const cartCloseDOM = document.querySelector(".cart__buttons--close")
 
 const handleCartOpening = () => {
     //Open cart logic
     cartDOM.style.display = "block";
 }
+
+cartIconDOM.addEventListener("click", handleCartOpening);
 
 //Close cart logic
 cartCloseDOM.addEventListener("click", function () {
@@ -75,20 +81,20 @@ payCartDOM.addEventListener("click", async () => {
 
 
 const clearCart = () => {
-    for (let i = 0; i < productsOnCart.length; i++) {
-        subtotal -= productsOnCart[i].price * productsOnCart[i].quantity;
-        total = (subtotal * 0.15) + subtotal;
-
-        subtotalDOM.textContent = "Subtotal: $" + subtotal.toLocaleString();
-        totalDOM.textContent = "Total (tax 15%): $" + total.toLocaleString();
-    }
     productsOnCart.splice(0, productsOnCart.length);
+    subtotal = 0;
+    total = 0;
+    subtotalDOM.textContent = "Subtotal: $" + subtotal.toLocaleString();
+    totalDOM.textContent = "Total (tax 15%): $" + total.toLocaleString();
 
     for (let i = 0; i < containerArray.length; i++) {
         containerArray[i].container.remove();
     }
     containerArray.splice(0, containerArray.length);
 
+    //Update mini cart text
+    cartIconText.textContent = productsOnCart.length
+    
     //Set the values of the cart on the local storage 
     localStorage.setItem('cart', JSON.stringify(productsOnCart));
 };
@@ -100,6 +106,9 @@ clearCartDOM.addEventListener("click", clearCart)
 const addToCart = (product, quantity) => {
     if (checkAvailability(product) && !containerArray.some(item => item.productName === product.name)) {
         productsOnCart.push(product);
+        //Update mini cart text
+        cartIconText.textContent = productsOnCart.length
+
         addToDOM(product, quantity);
     }
 
@@ -192,6 +201,9 @@ const removeFromCart = async (product) => {
         const index = productsOnCart.indexOf(product);
         productsOnCart[index].quantity = 0;
         productsOnCart.splice(index, 1);
+
+        //Update mini cart text
+        cartIconText.textContent = productsOnCart.length
 
         // Set the values of the cart on the local storage
         localStorage.setItem('cart', JSON.stringify(productsOnCart));

@@ -265,3 +265,17 @@ p {
     background-color: red;
     color: white;
 }
+
+/*mini cart */
+
+.bi-cart + p {
+position: absolute;
+top: 6%;
+right: 3.7%;
+font-size: 20px;
+}
+
+.bi-cart:hover {
+    color: rgb(43, 255, 0);
+    transition: 0.2s;
+}
