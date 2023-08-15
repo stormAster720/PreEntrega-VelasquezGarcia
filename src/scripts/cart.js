@@ -168,7 +168,6 @@ const addToDOM = (product, quantity) => {
     }
 };
 
-
 // Remove from cart function
 const removeFromCart = async (product) => {
     subtotal -= product.price * product.quantity;
